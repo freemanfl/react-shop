@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@mui/icons-material";
-import React from "react";
-import slider1 from "../assets/images/slider/1.jpg"
+import { React, useState } from "react";
+import { sliderItems } from "../data";
 
 const Container = styled.div`
   width: 100%;
@@ -27,12 +27,16 @@ const Arrow = styled.div`
   right: ${(props) => props.direction === "right" && "10px"};
   margin: auto;
   cursor: pointer;
+  opacity: 0.5;
+  z-index: 2;
 `;
 
 
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
+  transition: all 1.5s ease;
+  transform: translateX(${(props) => props.slideIndex * -100}vw );
 
 `
 
@@ -49,7 +53,12 @@ height: 100%;
 flex: 1;
 `;
 
-const Image = styled.img`
+const Image = styled.img.attrs(props => ({
+  // Pass down additional props to the underlying img element
+  referrerPolicy: "no-referrer",
+  src: props.src,
+  alt: props.alt,
+}))`
   height: 80%;
 `
 
@@ -62,7 +71,8 @@ const Title = styled.h1`
  font-size: 70px;
 `
 const Desc = styled.p`
-  margin: 50px 0px;font-size: 20px;
+  margin: 50px 0px;
+  font-size: 20px;
   font-weight: 500;
   letter-spacing: 3px;
 `
@@ -75,51 +85,49 @@ const Button = styled.button`
 
 
 const Slider = () => {
+  const [slideIndex, setSlideIndex] = useState(0);
+  const handleClick = (direction) => {
+
+    if (direction === "left") {
+      setSlideIndex(slideIndex > 0 ? slideIndex - 1 : 2);
+      console.log(slideIndex)
+    }
+    else {
+      setSlideIndex(slideIndex < 2 ? slideIndex + 1 : 0);
+      console.log(slideIndex)
+    }
+  };
+
+
   return (
-    <Container>
-      <Arrow direction="left">
+    < Container >
+
+      <Arrow direction="left" onClick={() => handleClick("left")}>
         <ArrowLeftOutlined />
       </Arrow>
-      <Wrapper>
-        <Slide bg="f5fafd">
-          <ImgContainer>
-            <Image src={slider1} />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>SUMMER SALE</Title>
-            <Desc>DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.</Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
+      <Wrapper slideIndex={slideIndex}>
+        {sliderItems.map((item) => (
+          <Slide bg={item.bg} key={item.id}>
+            <ImgContainer>
+              <Image src={item.img} alt={item.title} />
+            </ImgContainer>
 
-        <Slide bg="fcf1ed">
-          <ImgContainer>
-            <Image src={slider1} />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>WINTER SALE</Title>
-            <Desc>DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.</Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
-
-        <Slide bg="fbf0f4">
-          <ImgContainer>
-            <Image src={slider1} />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>POPuLAR SALE</Title>
-            <Desc>DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.</Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
-
+            <InfoContainer>
+              <Title>{item.title}</Title>
+              <Desc>{item.desc}</Desc>
+              <Button>SHOW NOW</Button>
+            </InfoContainer>
+          </Slide>
+        ))}
       </Wrapper>
-      <Arrow direction="right">
+      <Arrow direction="right" onClick={() => handleClick("right")}>
         <ArrowRightOutlined />
       </Arrow>
-    </Container>
-  );
-};
+
+    </Container >
+
+
+  )
+}
 
 export default Slider;
