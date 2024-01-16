@@ -59,7 +59,7 @@ const Image = styled.img.attrs(props => ({
   src: props.src,
   alt: props.alt,
 }))`
-  height: 80%;
+  height: 100%;
 `
 
 const InfoContainer = styled.div`
